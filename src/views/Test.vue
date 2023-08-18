@@ -23,7 +23,7 @@ import Button from "@/components/Button.vue";
 import {onBeforeMount, ref} from "vue";
 import {useRoute} from "vue-router";
 import TextArea from "@/components/TextArea.vue";
-import {getGroupmembers} from "@/moodleFetch.js";
+import {getGroupmembers} from "@/backend/moodleFetch.js";
 import Modal from "@/components/Modal.vue";
 import Checkbox from "@/components/Checkbox.vue";
 import Arrow from "@/components/Arrow.vue";
@@ -61,10 +61,6 @@ const handleFocus = () => {
     textarea.value.selectionEnd = 0;
   }
 };
-
-function ff() {
-  return showNote.value ? "True" : "false"
-}
 
 const selectedOption = ref("")
 

@@ -30,7 +30,7 @@ const router = createRouter({
         },
         {
             path: '/student',
-            name: 'students',
+            name: 'studenttestseite',
             component: () => import("../views/InfoStudent.vue")
         },
         {
@@ -40,7 +40,7 @@ const router = createRouter({
         },
         {
             path: '/aufgabe',
-            name: 'aufgabes',
+            name: 'aufgabetestseite',
             component: () => import("../views/AufgabenTermin.vue")
         },
         {

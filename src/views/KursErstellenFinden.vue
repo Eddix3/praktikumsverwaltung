@@ -9,12 +9,10 @@ import ErrorMessage from "@/components/ErrorMessage.vue";
 const store = useVerwaltungsStore()
 
 const kursLink = ref("")
-
 function kursErstellen() {
   const courseId = kursLink.value.split('id=')[1]
   store.kursErstellenFinden(Number(courseId))
 }
-
 function changeRoute() {
   router.back()
 }

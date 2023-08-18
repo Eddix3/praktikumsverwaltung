@@ -48,7 +48,7 @@ export async function getKursListe(userId) {
  *
  * @return {Promise} Ob das Update geklappt hat oder nicht.
  */
-export async function kursErstellen(kursId, userId, kursName) {
+export async function kursErstellenDB(kursId, userId, kursName) {
     let connection;
     try {
         connection = await pool.getConnection();
@@ -63,20 +63,28 @@ export async function kursErstellen(kursId, userId, kursName) {
             console.log("hier now")
             await connection.query("INSERT INTO kursliste(Kurs_idKurs,Teacher_idTeacher) VALUES(?,?)", [kursId, userId])
         }
-        else {
-            //todo kursVerbindung besteht schon also einfach kursdaten ziehen oder auch seperat mal schauen
-        }
+        return true
     } catch (err) {
         console.log("failed Funktion kursErstellen")
         console.log("err")
+        return false
     } finally {
         await connection.release()
     }
 }
 
-export async function kursFinden(kursId, userId) {
+/**
+ * Findet den Kurs, falls vorhanden
+ *
+ * @param {number} kursId Die ID des Kurses.
+ * @param {number} userId Die ID des eingeloggten Users.
+ *
+ * @return {Promise} Ob der Kurs schon in der Datenbank vorhanden ist oder nicht.
+ */
+export async function kursFindenDB(kursId, userId) {
     let connection;
     try {
+        //todo prüfen und dann was sinnvolles zurück senden je nachdem ob der kurs gefunden wurde oder nicht
         connection = await pool.getConnection();
         console.log("it work")
         const row1 = await connection.query("SELECT * FROM kurs WHERE idKurs = ?", [kursId])
@@ -93,11 +101,20 @@ export async function kursFinden(kursId, userId) {
     } catch (error) {
         console.log("failed")
         console.log(error)
+        return false
     } finally {
         await connection.release()
     }
 }
 
+/**
+ * Findet den Kurs, falls vorhanden
+ *
+ * @param {number} kursId Die ID des Kurses.
+ * @param {connection}  Die ID des eingeloggten Users.
+ *
+ * @return {Promise} Ob der Kurs schon in der Datenbank vorhanden ist oder nicht.
+ */
 async function kursInDB(conn, kursId) {
     try {
         const row = await conn.query("SELECT * FROM kurs WHERE idKurs = ?", [kursId])
@@ -110,8 +127,16 @@ async function kursInDB(conn, kursId) {
 
 }
 
+/**
+ * Holt sich die nötigen Informationen für die Standardkursansicht
+ *
+ * @param {number} kursId Die ID des Kurses.
+ * @param {number} userId Die ID des eingeloggten Users.
+ *
+ * @return {Promise} sendet die Kursdaten
+ */
 //todo anwesenheit kriegen von Studenten im Kurs
-export async function kursInfos(kursId, userId) {
+export async function kursDatenDB(kursId, userId) {
     let connection;
     try {
         connection = await pool.getConnection();
@@ -146,11 +171,19 @@ export async function kursInfos(kursId, userId) {
     }
 }
 
-//todo kriegen von StudentenInfo im Kurs
 
 
+/**
+ * Updated die Notizen, Notizen(Dozent) und ob der Student abgebrochen, sowie ob der Student von dem eingeloggten User für die Betreuung markiert wurde.
+ *
+ * @param {number} aufgabenId Die ID der Aufgabe.
+ * @param {number} studentId Die ID des Studenten.
+ * @param {number} kursId Die ID des Kurses.
+ * @param {String} anwesenheit Der Anwesenheitsstatus.
+ *
+ * @return {Promise} Ob das Update geklappt hat oder nicht.
+ */
 //todo befehl zum updaten von der Anwesenheit zum jeweiligen Termin für Aufgabe x
-
 export async function updateAnwesenheit(aufgabenId, studentId, anwesenheit, kursId) {
     let connection;
     try {
@@ -165,7 +198,7 @@ export async function updateAnwesenheit(aufgabenId, studentId, anwesenheit, kurs
         const rows = await connection.query("REPLACE INTO aufgabe(idAufgabe, Student_idStudent, Anwesenheit) VALUE(?,?,?)", [aufgabenId, studentId, anwesenheit])
         console.log(rows)
     } catch (error) {
-        console.log("failed")
+        console.log("failed updateAnwesenheit")
         console.log(error)
     } finally {
         await connection.release()
@@ -187,6 +220,7 @@ export async function updateAnwesenheit(aufgabenId, studentId, anwesenheit, kurs
  */
 //todo befehl zum updaten von Studententable für Notizen, Notizen(tutor), abgebrochen, ob student favorisiert wurde
 //todo wenn die betreuung erstellt wird und der user nicht existiert den User zuerst erstellen
+//todo unterscheiden zwischen dozent und eintrag nur von tutor
 export async function updateStudent(notizen, notizenDozent, abgebrochen, studentId, kursId, favorisiert, userId) {
     let connection;
     console.log(typeof notizenDozent)
@@ -211,7 +245,7 @@ export async function updateStudent(notizen, notizenDozent, abgebrochen, student
         }
     } catch (err){
         console.log(err)
-        console.log("failed")
+        console.log("failed updateStudent")
     } finally {
         await connection.release()
     }

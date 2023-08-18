@@ -1,6 +1,5 @@
 <script setup>
 import {useVerwaltungsStore} from '@/stores/PraktikumsverwaltungStore.js'
-import router from "@/router/index.js";
 import {ref} from "vue";
 import Checkbox from "@/components/Checkbox.vue";
 import TabellenZeilenElement from "@/components/TabellenZeilenElement.vue";
@@ -16,19 +15,11 @@ function updateGruppe(id) {
   currentGroupId.value = id
   console.log(currentGroupId.value)
 }
-
-function showTermin(studentenId, aufgabenId) {
-  router.push({path: `aufgabe/${studentenId}/${aufgabenId}`})
-}
-
 function filterStudentenListe() {
   return store.studenten.filter(student => student["name"].toLowerCase().includes(searchBarInput.value.toLowerCase()) )
-
 }
 
-function showStudentenInfo(studentenId) {
-  router.push({path: `student/${studentenId}`})
-}
+
 </script>
 
 <template>

@@ -1,9 +1,11 @@
 import express from "express"
 import cors from "cors";
-import {getKursListe, kursErstellen, kursFinden, kursInfos, updateAnwesenheit, updateStudent} from "./dbConnection.js";
+import {updateAnwesenheit, updateStudent} from "../backend/dbConnection.js"
+import {kursErstellenFinden} from '../backend/helper.js'
 import * as bodyParser from "express";
 const app = express()
 
+const authorizedTokens = []
 
 app.use(cors())
 
@@ -27,30 +29,22 @@ app.use('/api', function(req, res, next){
  */
 
 
-// todo beim login die Kursliste vom user ziehen und vll auch mögliche Accounteinstellungen
-app.get('/apidb/login', function (req, res, next) {
-    res.send(getKursListe(req.query["id"]))
+// todo beim login die Kursliste vom user ziehen und vll auch mögliche Accounteinstellungen und ws Token
+app.post('/login', function (req, res, next) {
+    res.send(req["body"])
 })
 
-//todo kurs erstellen anfrage
-app.get('/apidb/erstellekurs', function (req, res, next) {
-    res.send(kursErstellen(req.query["kursid"], req.query["userid"], req.query["kursname"]))
-})
-
-//todo kurs finden anfrage
-app.get('/apidb/findekurs', function (req, res, next) {
-    res.send(kursFinden(req.query["kursid"], req.query["userid"]))
+//todo kurs erstellen finden anfrage
+app.post('/kursfindenerstellen', function (req, res, next) {
+    const data = req.body
+    kursErstellenFinden(data.wstoken, data.userid, data["courseid"])
 })
 
 //todo alle Informationen die notwendig sind für die kurs ansicht
-app.get('/apidb/kurs', function (req, res, next) {
-    console.log("BRO WAS GEHT HIER AB")
-    console.log(kursInfos(req.query["kursid"], req.query["userid"]))
-    kursInfos(req.query["kursid"], req.query["userid"]).then(data => {
-        console.log(data)
-        res.json(data)
-        console.log("Bruder muss los")
-    })
+app.post('/getkursinfos', function (req, res, next) {
+    const data = req.body
+    res.send(kursErstellenFinden(data.wstoken, data.userid, data["courseid"]))
+
 })
 
 //todo wenn jemand info über einen student haben will
@@ -60,7 +54,7 @@ app.get('/apidb/studentinfo', function (req, res, next) {
 })
 
 //todo wenn jemand info die aufgabe für einen studenten updaten will
-app.post('/apidb/anwesenheit', function (req, res, next) {
+app.post('/apidb/updateanwesenheit', function (req, res, next) {
     const data = req.body;
     updateAnwesenheit(data["aufgabenid"], data["studentid"], data["anwesenheit"], data["kursid"]).then(data => {
 
@@ -77,6 +71,11 @@ app.post('/apidb/updatestudent', function (req, res, next) {
             response =>
             res.send("lucky bro"))
 
+
+})
+
+//todo wenn jemand die note im lernraum updaten will
+app.post('/apidb/updatenote', function (req, res, next) {
 
 })
 

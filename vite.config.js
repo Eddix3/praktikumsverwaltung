@@ -8,6 +8,9 @@ export default defineConfig({
   server: {
     cors: {
       origin: '*',
+      methods: 'GET, POST, PUT, DELETE',
+      allowedHeaders: 'Content-Type, Authorization',
+      credentials: true,
     },
   },
   plugins: [vue()],
