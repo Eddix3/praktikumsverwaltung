@@ -1,11 +1,12 @@
 <script setup>
 import {useVerwaltungsStore} from '@/stores/PraktikumsverwaltungStore.js'
+import Navbar from "@/components/Navbar.vue";
 const store = useVerwaltungsStore()
 
 </script>
 
 
 <template>
-  <h1>BRO HÄÄÄ</h1>
-  <div>its rough</div>
+  <div><Navbar></Navbar></div>
+  <div><router-view></router-view></div>
 </template>

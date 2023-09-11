@@ -112,7 +112,7 @@ export function getGroupmembers(wsToken, groupIds) {
             wstoken: wsToken,
             wsfunction: "core_group_get_group_members",
             //todo hardcoded weil es nicht geht ????
-            groupids: [1,2,3]
+            groupids: groupIds
         }
     })
 }
@@ -141,31 +141,27 @@ export function getGrades(wsToken, courseId) {
  * @param {string} wsToken Das Webservicetoken zur Authentifizierung.
  * @param {number} assignId Die ID der Aufgabe.
  * @param {number} userId Die User ID des eingeloggten Nutzers.
- * @param {string} grade Die Punkte für die Aufgabe.
+ * @param {number} grade Die Punkte für die Aufgabe.
  * @param {string} textInput Das Feedback als Kommentar.
- * @param {string} textFormat Das ausgewählte Textformat.
+ * @param {number} textFormat Das ausgewählte Textformat.
  *
  * @return {Promise} Ob erfolgreich oder nicht.
  */
 export function saveGrade(wsToken, assignId, userId, grade, textInput, textFormat) {
-    return axios.post('http://localhost/webservice/rest/server.php/', {
-        wstoken: wsToken,
-        wsfunction: "mod_assign_save_grade",
-        assignid: assignId,
-        userid: userId,
-        grade: grade,
-        "plugindata[assignfeedbackcomments_editor][text]": textInput,
-        // folgende Parameter sind notwendig für die POST-Rest-Anfrage aber für die Anwendung nicht relevant
-        "plugindata[assignfeedbackcomments_editor][format]": textFormat,
-        attemptnumber: -1,
-        addattempt: 0,
-        workflowstate: "",
-        applytoall: 0,
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
-            }
-    })
+    return axios.get(url, {
+        params: {
+            wstoken: wsToken,
+            wsfunction: "mod_assign_save_grade",
+            assignmentid: assignId,
+            userid: userId,
+            grade: grade,
+            "plugindata[assignfeedbackcomments_editor][text]": textInput,
+            // folgende Parameter sind notwendig für die POST-Rest-Anfrage aber für die Anwendung nicht relevant
+            "plugindata[assignfeedbackcomments_editor][format]": textFormat,
+            attemptnumber: -1,
+            addattempt: 0,
+            workflowstate: "",
+            applytoall: 0,
+        }}
+       )
 }

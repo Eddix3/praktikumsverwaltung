@@ -1,18 +1,17 @@
 <script setup>
-import {ref} from "vue";
 import router from "@/router/index.js";
-import Dropdown2 from "@/components/DropdownAnwesenheit.vue";
 import {useVerwaltungsStore} from '@/stores/PraktikumsverwaltungStore.js'
 import DropdownAnwesenheit from "@/components/DropdownAnwesenheit.vue";
 
 const store = useVerwaltungsStore()
 
 const props = defineProps({
-  student: Object
+  student: Object,
+  notenAnzeigen: Boolean
 })
 const emit = defineEmits(['onClick'])
 
-const noten = ref()
+
 function onClick() {
   emit('onClick')
 }
@@ -24,10 +23,7 @@ function showTermin(studentenId, aufgabenId) {
 function showStudentenInfo(studentenId) {
   return router.push({path: `student/${studentenId}`})
 }
-function saveAnwesenheit(studentId, aufgabeId, anwesenheit, index) {
-  store.changeAnwesenheit(studentId, aufgabeId, anwesenheit)
-  props.student["noten"][index]["anwesenheit"] = anwesenheit
-}
+
 </script>
 
 <template>
@@ -39,10 +35,10 @@ function saveAnwesenheit(studentId, aufgabeId, anwesenheit, index) {
       {{ props.student.name }}
     </th>
     <!-- Alle Aufgabenfelder für den aktuellen User-->
-    <template v-for="(aufgabeNote, index) in props.student.noten">
+    <template v-for="(aufgabeNote) in props.student.noten">
       <td class="text-center border px-6 py-4">
-        <div class="whitespace-nowrap pb-5">Bewertungsfortschritt: {{aufgabeNote.fortschritt}}</div>
-        <DropdownAnwesenheit @onClick="anwesenheit => saveAnwesenheit(props.student.id, aufgabeNote.id, anwesenheit, index)" :elemente="store.anwesenheitsTypen" :current-value="aufgabeNote.anwesenheit" drop-down-default-name="Anwesenheit"></DropdownAnwesenheit>
+        <div class="whitespace-nowrap pb-5">Bewertungsfortschritt: {{!props.notenAnzeigen ? aufgabeNote.fortschritt: ""}}</div>
+        <DropdownAnwesenheit @onClick="anwesenheit => store.changeAnwesenheit(aufgabeNote.id,student.id, anwesenheit)" :elemente="store.anwesenheitsTypen" :current-value="aufgabeNote.anwesenheit" drop-down-default-name="Anwesenheit"></DropdownAnwesenheit>
         <router-link class= "justify-center flex white-space: nowrap pt-4 font-medium text-blue-900 dark:text-white hover:text-gray-600" :to="showTermin(props.student.id, aufgabeNote.id)" >Detailansicht</router-link>
       </td>
     </template>

@@ -1,22 +1,58 @@
 <script setup>
 import {useVerwaltungsStore} from '@/stores/PraktikumsverwaltungStore.js'
-import {ref} from "vue";
+import {onBeforeMount, ref, watch} from "vue";
 import Checkbox from "@/components/Checkbox.vue";
 import TabellenZeilenElement from "@/components/TabellenZeilenElement.vue";
 import Dropdown from "@/components/Dropdown.vue";
+import {useRoute} from "vue-router";
 
 const store = useVerwaltungsStore()
 
-const currentGroupId = ref(-1)
+//TODO Filter werden nicht bei Kurswechsel nicht zurückgesetzt
+const betreuteStudentenAnzeigen = ref(!!Number(sessionStorage.getItem("betreuteAnzeigen")))
+
+const abgebrochenStudentenAnzeigen = ref(!!Number(sessionStorage.getItem("abgebrocheneAnzeigen")))
+
+const notenVerstecken = ref(!!Number(sessionStorage.getItem('notenVerstecken')))
+
+const currentGroupId = ref(Number(sessionStorage.getItem('currentGroupId')))
 
 const searchBarInput = ref("")
+
+const route = useRoute()
+
+onBeforeMount( () => {
+  if (store.studenten.length === 0 && Number(sessionStorage.getItem("currentKursId")) !== -1) {
+     store.fetchKursInfos(Number(sessionStorage.getItem("currentKursId")))
+  }
+
+
+})
 function updateGruppe(id) {
-  console.log(id)
   currentGroupId.value = id
-  console.log(currentGroupId.value)
+  sessionStorage.setItem("currentGroupId", String(id))
 }
-function filterStudentenListe() {
-  return store.studenten.filter(student => student["name"].toLowerCase().includes(searchBarInput.value.toLowerCase()) )
+function updateBetreuteStudentenAnzeigen() {
+  betreuteStudentenAnzeigen.value = !betreuteStudentenAnzeigen.value
+  sessionStorage.setItem("betreuteAnzeigen", betreuteStudentenAnzeigen.value ? "1" : "0")
+}
+
+function updateAbgebrochenStudentenAnzeigen() {
+  abgebrochenStudentenAnzeigen.value = !abgebrochenStudentenAnzeigen.value
+  sessionStorage.setItem("abgebrocheneAnzeigen", abgebrochenStudentenAnzeigen.value ? "1" : "0")
+
+}
+
+function updateNotenVerstecken() {
+  notenVerstecken.value = !notenVerstecken.value
+  sessionStorage.setItem("notenVerstecken", notenVerstecken.value ? "1" : "0")
+}
+
+function filterStudent(student) {
+  return student["name"].toLowerCase().includes(searchBarInput.value.toLowerCase()) &&
+      (student["gruppenId"] === currentGroupId.value || currentGroupId.value === -1) &&
+      !!student["abgebrochen"] === abgebrochenStudentenAnzeigen.value &&
+      (betreuteStudentenAnzeigen.value ? student["betreut"] === betreuteStudentenAnzeigen.value : true)
 }
 
 
@@ -43,19 +79,16 @@ function filterStudentenListe() {
       </div>
       </li>
       <!-- TableSearchElement ende-->
-      <Dropdown :elemente="store.alleGruppen" @onClick="args => updateGruppe(args.id)" drop-down-default-name="Alle Gruppen" :current-value="-1"></Dropdown>
+      <Dropdown :elemente="store.alleGruppen" @onClick="args => updateGruppe(args.id)" drop-down-default-name="Alle Gruppen" :current-value="currentGroupId"></Dropdown>
       <li>
-      <Checkbox checkbox-name="Meine Studenten" @onClick=""></Checkbox>
+      <Checkbox :abgehackt="betreuteStudentenAnzeigen" checkbox-name="Meine Studenten" @onClick="updateBetreuteStudentenAnzeigen()"></Checkbox>
       </li>
       <li>
-        <Checkbox checkbox-name="Praktikum abgebrochen" @onClick=""></Checkbox>
+        <Checkbox :abgehackt="abgebrochenStudentenAnzeigen" checkbox-name="Praktikum abgebrochen" @onClick="updateAbgebrochenStudentenAnzeigen"></Checkbox>
       </li>
       <li>
-        <Checkbox checkbox-name="Bewertungen verstecken" @onClick=""></Checkbox>
+        <Checkbox :abgehackt="notenVerstecken" checkbox-name="Bewertungen verstecken" @onClick="notenVerstecken = !notenVerstecken"></Checkbox>
       </li>
-
-
-
     </ul>
     <!-- Table Beginn-->
     <table class="overflow-y-auto overflow-x-auto w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -70,10 +103,10 @@ function filterStudentenListe() {
         </th>
       </tr>
       </thead>
-      <!-- Alle Zeilenelemente in der Tabellenübersicht-->
+      <!-- Alle Zeilenelemente in der Tabellenübersicht          v-show="student.gruppenId === currentGroupId || currentGroupId === -1" -->
       <tbody>
-        <template v-for="student in filterStudentenListe()">
-           <TabellenZeilenElement v-show="student.gruppenId === currentGroupId || currentGroupId === -1" :student="student"></TabellenZeilenElement>
+        <template v-for="student in store.studenten">
+           <TabellenZeilenElement v-show="filterStudent(student)" :student="student" :notenAnzeigen="notenVerstecken"></TabellenZeilenElement>
         </template>
       </tbody>
     </table>

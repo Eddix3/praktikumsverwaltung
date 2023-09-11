@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import {useVerwaltungsStore} from '@/stores/PraktikumsverwaltungStore.js'
 import Home from "@/views/Home.vue";
 
 const router = createRouter({
@@ -13,57 +12,47 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            // route level code-splitting
-            // this generates a separate chunk (About.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: Home
-        },
-        {
-            path: '/getkurs',
-            name: 'getkurs',
-            component: () => import('../views/KursErstellenFinden.vue')
-        },
-        {
-            path: '/kurs',
-            name: 'kurs',
-            component: () => import('../views/TabellenAnsicht.vue')
-        },
-        {
-            path: '/student',
-            name: 'studenttestseite',
-            component: () => import("../views/InfoStudent.vue")
-        },
-        {
-            path: '/student/:studentid',
-            name: 'student',
-            component: () => import("../views/InfoStudent.vue")
-        },
-        {
-            path: '/aufgabe',
-            name: 'aufgabetestseite',
-            component: () => import("../views/AufgabenTermin.vue")
-        },
-        {
-            path: '/aufgabe/:studentid/:aufgabeid',
-            name: 'aufgabe',
-            component: () => import("../views/AufgabenTermin.vue")
-        },
-
-        {
-            path: '/test',
-            name: 'test',
-            component: () => import('../views/Test.vue')
+            component: Home,
+            children: [
+                {
+                    path: '/getkurs',
+                    name: 'getkurs',
+                    component: () => import('../views/KursErstellenFinden.vue')
+                },
+                {
+                    path: '/kurs/:kursid',
+                    name: 'kurs',
+                    component: () => import('../views/TabellenAnsicht.vue')
+                },
+                {
+                    path: '/student',
+                    name: 'studenttestseite',
+                    component: () => import("../views/InfoStudent.vue")
+                },
+                {
+                    path: 'kurs/student/:studentid',
+                    name: 'student',
+                    component: () => import("../views/InfoStudent.vue")
+                },
+                {
+                    path: '/aufgabe',
+                    name: 'aufgabetestseite',
+                    component: () => import("../views/AufgabenTermin.vue")
+                },
+                {
+                    path: 'kurs/aufgabe/:studentid/:aufgabeid',
+                    name: 'aufgabe',
+                    component: () => import("../views/AufgabenTermin.vue")
+                },
+            ]
         },
 
     ]
 })
 
-/*router.beforeEach(async (to, from) => {
-    // ✅ This will work because the router starts its navigation after
-    // the router is installed and pinia will be installed too
-    const store = useVerwaltungsStore()
-    if (to.name !== "login" && !store.isLoggedIn()) return {name: "login"}
+router.beforeEach(async (to, from) => {
+    if (to.name !== "login" && (sessionStorage.getItem("wsToken") === null)) return {name: "login"}
 })
 
- */
+
 export default router

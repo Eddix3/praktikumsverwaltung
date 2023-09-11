@@ -1,7 +1,3 @@
-<script setup>
-//todo use slot for this https://vuejs.org/guide/components/slots.html#render-scope
-</script>
-
 <template>
   <!-- Main modal -->
   <div role="dialog" aria-modal="true"

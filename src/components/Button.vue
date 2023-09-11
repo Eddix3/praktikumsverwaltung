@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps({
+defineProps({
   buttonName: String
 })
 const emit = defineEmits(['onClick'])
