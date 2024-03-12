@@ -1,5 +1,10 @@
 # Praktikumsverwaltung
 
+Projekt für eine Praktikumsverwaltungssoftware für Module an der Hochschule mit laufendem 
+Praktikum in dem Studiengang Informatik und Softwaretechnik.
+Beinhaltet Backend-Server für die Kommunikation mit Datenbank-Server und den Moodle Server 
+über die Moodle API. Zudem beinhaltet es das Frontend entwickelt mit Vue.js.
+Projekt 
 ## Project Setup
 
 ```sh
@@ -13,14 +18,9 @@ npx tailwindcss -i ./src/assets/style.css -o ./dist/output.css
 npm run dev
 ```
 
-### Zum Starten des Backend-Servers in einem anderen Terminal
+### Zum Starten des Backend-Servers 
 
 ```sh
 npm run server
 ```
 
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
