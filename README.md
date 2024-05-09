@@ -1,10 +1,8 @@
-# Praktikumsverwaltung
+# Internship Management
 
-Projekt für eine Praktikumsverwaltungssoftware für Module an der Hochschule mit laufendem 
-Praktikum in dem Studiengang Informatik und Softwaretechnik.
-Beinhaltet Backend-Server für die Kommunikation mit Datenbank-Server und den Moodle Server 
-über die Moodle API. Zudem beinhaltet es das Frontend entwickelt mit Vue.js.
-Projekt 
+Project for an internship management software for courses at the university with ongoing internships in Computer Science and Software Engineering. 
+It includes a backend server for communication with the database server and the Moodle server via the Moodle API.
+Additionally, it includes the frontend developed with Vue.js.
 ## Project Setup
 
 ```sh
@@ -12,13 +10,13 @@ npm install
 npx tailwindcss -i ./src/assets/style.css -o ./dist/output.css
 ```
 
-### Zum Starten des Enwicklungsserver der Anwendung
+### Start the development server of the application
 
 ```sh
 npm run dev
 ```
 
-### Zum Starten des Backend-Servers 
+### Start the backend server
 
 ```sh
 npm run server
